@@ -36,7 +36,8 @@ In this repository you will get:
 - Form Validations
 - String Encryption Decryption
 - Postgres and MySQL DB Implementation and easy to switch between
---Typeorm
+- Typeorm
+- Migrations
 - Crud Operations on User Module
 - Node Cache
 - API Documenation (Swagger)
