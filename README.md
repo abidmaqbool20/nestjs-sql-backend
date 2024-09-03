@@ -35,7 +35,8 @@ In this repository you will get:
 - API Throttling
 - Form Validations
 - String Encryption Decryption
-- Dynamodb Service Implementation
+- Postgres and MySQL DB Implementation and easy to switch between
+--Typeorm
 - Crud Operations on User Module
 - Node Cache
 - API Documenation (Swagger)
