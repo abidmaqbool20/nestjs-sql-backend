@@ -37,10 +37,13 @@ In this repository you will get:
 - String Encryption Decryption
 - Postgres and MySQL DB Implementation and easy to switch between
 - Typeorm
+- Migrations implementation
+- Roles and Permissions Implementation
 - Migrations
 - Crud Operations on User Module
 - Node Cache
 - API Documenation (Swagger)
+- API Reqeust Responses
 
 ## Installation
 
@@ -61,28 +64,16 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Setting up the app
 
 ```bash
-# unit tests
-$ npm run test
+# Generating database tables
+$ npm run migration:run
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Seeding database with fake data
+$ npm run seed
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
 ## Stay in touch
 
 - Author - [Abid Maqbool](abidmaqbool20@gmail.com)
 - Website - [https://abidmaqbool.com](https://abidmaqbool.com)
-
-## License
-
-Nest is [MIT licensed](LICENSE).

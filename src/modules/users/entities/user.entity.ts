@@ -1,12 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn , ManyToMany, JoinTable} from 'typeorm';
 import { CreateDto } from '../dto/create.dto';
 import { GeneralHelper } from '@/helpers/general.helper';
+import { Role } from '../../roles/entities/role.entity';
 
-@Entity('users')   
+@Entity('users')
 export class User {
-  
+
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  id: bigint;  
+  id: bigint;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -23,7 +24,14 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles: Role[];
+
   static async newInstanceFromDTO(data: CreateDto): Promise<User> {
     const result = new User();
     result.name = data.name;
@@ -32,6 +40,6 @@ export class User {
     result.created_at = data.created_at || new Date();
     result.updated_at = new Date();
     return result;
-  } 
+  }
 
 }

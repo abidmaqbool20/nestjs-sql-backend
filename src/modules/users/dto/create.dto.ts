@@ -1,8 +1,8 @@
 import { IsOptional, IsString, IsEmail, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateDto {  
- 
+export class CreateDto {
+
   @ApiProperty({ description: 'The name of the user' })
   @IsOptional()
   @IsString()
@@ -14,7 +14,7 @@ export class CreateDto {
 
   @ApiProperty({ description: 'The password of the user' })
   @IsString()
-  password: string;  // Password should generally be required for user creation
+  password: string;
 
   @IsOptional()
   @IsDate()

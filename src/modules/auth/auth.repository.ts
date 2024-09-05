@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 import { TokenService } from '@/modules/auth/token.service';
 import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
-config(); 
+config();
 
 @Injectable()
 export class AuthRepository {
@@ -27,7 +27,10 @@ export class AuthRepository {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.UserDBRepository.findOne({ where: { email: username } });
+    const user = await this.UserDBRepository.findOne({
+      where: { email: username },
+      relations: ['roles', 'roles.permissions'],
+    });
 
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
@@ -43,9 +46,18 @@ export class AuthRepository {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload: JwtPayload = { username: user.email, sub: user.id.toString() };
+    const roles = user.roles;
+
+    const payload: JwtPayload = {
+      username: user.email,
+      sub: user.id.toString(),
+      roles,
+    };
+
     return {
-      access_token: this.jwtService.sign(payload, { expiresIn: process.env.JWT_TOKEN_EXPIRE_TIME || '1h' }),
+      access_token: this.jwtService.sign(payload, {
+        expiresIn: process.env.JWT_TOKEN_EXPIRE_TIME || '1h',
+      }),
     };
   }
 

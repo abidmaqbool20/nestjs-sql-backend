@@ -1,39 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Res ,HttpStatus, UsePipes, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Inject,  Res,HttpStatus, ValidationPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
-import { UsersService } from './users.service';
+import { RolesService } from './roles.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { Request, Response } from 'express';
 import { GetDto } from './dto/get.dto';
 import { DeleteDto } from './dto/delete.dto';
-import { User } from './entities/user.entity';
+import { Request, Response } from 'express';
+import { Role } from './entities/role.entity';
 import { CustomLoggerService } from '@/logger/logger.service';
-import { ResponseService } from '@/global/response.service';
 import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
+import { ResponseService } from '@/global/response.service';
 import { AppPermissionsGuard } from '@/modules/auth/permissions.guard';
 import { AppPermissions } from '@/modules/auth/permissions.decorator';
-
-@ApiTags('Users')
+@ApiTags('Roles')
 @UseGuards(JwtAuthGuard, AppPermissionsGuard)
-@Controller('users')
-export class UsersController {
+@Controller('roles')
+export class RolesController {
   constructor(
-    private readonly moduleService: UsersService,
+    private readonly moduleService: RolesService,
     private readonly responseService: ResponseService,
-    private readonly logger: CustomLoggerService,
+    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
   ) {}
 
+  // Create API
   @Post()
-  @AppPermissions('create-user')
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'The user has been successfully created.', type: User })
+  @AppPermissions('create-role')
+  @ApiOperation({ summary: 'Create a new role' })
+  @ApiResponse({ status: 201, description: 'The role has been successfully created.', type: Role })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: CreateDto })
-  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @UsePipes(new ValidationPipe({ transform: true }))
   async create(@Body(new ValidationPipe({ transform: true, whitelist: true })) data: CreateDto, @Res() res: Response) {
     try {
-      let result =  await this.moduleService.create(data);
+      let result = await this.moduleService.create(data);
+
       res.status(HttpStatus.BAD_REQUEST);
       let message = 'Unsuccessful. Error occurred!';
       if(result){
@@ -41,17 +42,20 @@ export class UsersController {
         message = 'successful';
       }
       return this.responseService.sendResponse(res,message,result);
+
     } catch (error) {
       this.logger.error(error, 'An error occurred while creating user');
       throw error;
     }
   }
 
+  // Get Listings API
   @Get()
-  @AppPermissions('view-user')
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'List of users', type: [User] })
+  @AppPermissions('view-role')
+  @ApiOperation({ summary: 'Get all roles' })
+  @ApiResponse({ status: 200, description: 'List of roles', type: [Role] })
   @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: GetDto })
   async findAll(@Res() res: Response) {
     try {
       let result = await this.moduleService.findAll();
@@ -62,22 +66,26 @@ export class UsersController {
         message = 'successful';
       }
       return this.responseService.sendResponse(res,message,result);
+
     } catch (error) {
-      this.logger.error(error, 'An error occurred while fetching all users');
+      this.logger.error(error, 'An error occurred while fetching all roles');
       throw error;
     }
   }
 
+  // Get single record
   @Get(':id')
-  @AppPermissions('view-user')
-  @ApiOperation({ summary: 'Get a user by ID' })
-  @ApiParam({ name: 'id', description: 'User ID', type: 'number' })
-  @ApiResponse({ status: 200, description: 'User found', type: User })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @AppPermissions('view-role')
+  @ApiOperation({ summary: 'Get a role by ID' })
+  @ApiParam({ name: 'id', description: 'Role ID', type: 'number' })
+  @ApiBody({ type: GetDto })
+  @ApiResponse({ status: 200, description: 'Role found', type: Role })
+  @ApiResponse({ status: 404, description: 'Role not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async findOne(@Param('id') id: bigint, @Res() res: Response) {
+  async findOne(@Param('id') id: bigint, @Res() res: Response) {  // Change type to bigint
     try {
       let result = await this.moduleService.findOne(id);
+
       res.status(HttpStatus.BAD_REQUEST);
       let message = 'Unsuccessful. Error occurred!';
       if(result){
@@ -85,23 +93,27 @@ export class UsersController {
         message = 'successful';
       }
       return this.responseService.sendResponse(res,message,result);
+
+
     } catch (error) {
-      this.logger.error(error, `An error occurred while fetching user with id ${id}`);
+      this.logger.error(error, `An error occurred while fetching role with id ${id}`);
       throw error;
     }
   }
 
+  // Update API
   @Patch(':id')
-  @AppPermissions('update-user')
-  @ApiOperation({ summary: 'Update a user by ID' })
-  @ApiParam({ name: 'id', description: 'User ID', type: 'number' })
+  @AppPermissions('view-role')
+  @ApiOperation({ summary: 'Update a role by ID' })
+  @ApiParam({ name: 'id', description: 'Role ID', type: 'number' })
   @ApiBody({ type: UpdateDto })
-  @ApiResponse({ status: 200, description: 'User updated', type: User })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 200, description: 'Role updated', type: Role })
+  @ApiResponse({ status: 404, description: 'Role not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(@Param('id') id: bigint, @Body() data: UpdateDto, @Res() res: Response) {
     try {
-      let result = await this.moduleService.update(id, data);
+      let result =  await this.moduleService.update(id, data);
+
       res.status(HttpStatus.BAD_REQUEST);
       let message = 'Unsuccessful. Error occurred!';
       if(result){
@@ -109,23 +121,27 @@ export class UsersController {
         message = 'successful';
       }
       return this.responseService.sendResponse(res,message,result);
+
     } catch (error) {
-      this.logger.error(error, `An error occurred while updating user with id ${id}`);
+      this.logger.error(error, `An error occurred while updating role with id ${id}`);
       throw error;
     }
   }
 
+  // Delete API
   @Delete(':id')
-  @AppPermissions('delete-user')
-  @ApiOperation({ summary: 'Delete a user by ID' })
-  @ApiParam({ name: 'id', description: 'User ID', type: 'number' })
-  @ApiResponse({ status: 204, description: 'User deleted' })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @AppPermissions('delete-role')
+  @ApiOperation({ summary: 'Delete a role by ID' })
+  @ApiParam({ name: 'id', description: 'Role ID', type: 'number' })
+  @ApiBody({ type: DeleteDto })
+  @ApiResponse({ status: 204, description: 'Role deleted' })
+  @ApiResponse({ status: 404, description: 'Role not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
   async remove(@Param() params: DeleteDto, @Res() res: Response) {
     const { id } = params;
     try {
       let result = await this.moduleService.remove(id);
+
       res.status(HttpStatus.BAD_REQUEST);
       let message = 'Unsuccessful. Error occurred!';
       if(result){
@@ -133,8 +149,10 @@ export class UsersController {
         message = 'successful';
       }
       return this.responseService.sendResponse(res,message,result);
+
+
     } catch (error) {
-      this.logger.error(error, `An error occurred while deleting user with id ${id}`);
+      this.logger.error(error, `An error occurred while deleting role with id ${id}`);
       throw error;
     }
   }

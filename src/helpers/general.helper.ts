@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
@@ -13,18 +13,18 @@ export class GeneralHelper {
     return await uuidv4();
   }
 
-  static async encrypt(content: string, algorithm: string): Promise<string> {
+  static async encrypt(content: string, algorithm: string = 'bcrypt'): Promise<string> {
     if (algorithm === 'bcrypt') {
       return await bcrypt.hash(content, 10);
     }
     return content;
-  } 
+  }
 
   static async unprotectedRoutes(): Promise<string[]> {
     return [
       '/auth/login',
       '/auth/register',
     ];
-  }  
+  }
 
 }

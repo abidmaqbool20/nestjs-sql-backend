@@ -1,16 +1,16 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { UsersRepository } from './users.repository';
+import { RolesRepository } from './roles.repository';
 import { CacheService } from '@/cache/node.cache';
 import { GeneralHelper } from '@/helpers/general.helper';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
-  private readonly module = 'users';
+export class RolesService implements OnModuleInit {
+  private readonly module = 'roles';
   constructor(
-    private readonly repository: UsersRepository,
+    private readonly repository: RolesRepository,
     private readonly cacheService: CacheService
   ) {}
 
@@ -18,18 +18,19 @@ export class UsersService implements OnModuleInit {
     // Initialization if needed
   }
 
+
   //Create a record
-  async create(data: CreateDto): Promise<Boolean>  {
+  async create(data: CreateDto): Promise<Boolean> {
     const cacheKey = this.module+"-findAll";
-    let created = await this.repository.create(data);
-    if(created){
+    let result = await this.repository.create(data);
+    if(result){
       this.cacheService.del(cacheKey);
     }
-    return created ? true : false;
+    return result ? true : false;
   }
 
   //Fetch all listings
-  async findAll(): Promise<User[]>  {
+  async findAll(): Promise<Role[]> {
     const cacheKey = this.module+"-findAll";
     if (!this.cacheService.has(cacheKey)) {
       let result = await this.repository.findAll();
@@ -39,7 +40,7 @@ export class UsersService implements OnModuleInit {
   }
 
   //Find Single Record
-  async findOne(id: bigint): Promise<User>  {
+  async findOne(id: bigint): Promise<Role> {
     const cacheKey = this.module+"-findOne-"+id;
     if (!this.cacheService.has(cacheKey)) {
       let result = await this.repository.findOne(id);
@@ -48,11 +49,11 @@ export class UsersService implements OnModuleInit {
     return this.cacheService.get(cacheKey);
   }
 
-  //Find by Username
-  async findByUsername(username: string): Promise<User> {
-    const cacheKey = this.module+"-findByUsername-"+username;
+  //Find by Name
+  async findByName(name: string): Promise<Role> {
+    const cacheKey = this.module+"-findByName-"+name;
     if (!this.cacheService.has(cacheKey)) {
-      let result = await this.repository.findByUsername(username);
+      let result = await this.repository.findByName(name);
       this.cacheService.set(cacheKey, result, 36000);
     }
     return this.cacheService.get(cacheKey);
@@ -60,24 +61,23 @@ export class UsersService implements OnModuleInit {
 
   //Update record
   async update(id: bigint, userData: UpdateDto): Promise<Boolean> {
-
-    let result = await this.repository.update(id, userData);
+    let result = this.repository.update(id, userData);
 
     const cacheKey = this.module+"-findAll";
     this.cacheService.del(cacheKey);
 
-    const findOneCacheKey = this.module+"-findByUsername-"+id.toString();
+    const findOneCacheKey = this.module+"-findOne-"+id.toString();
     this.cacheService.del(findOneCacheKey);
 
-    return result;
+    return result ? true : false;
 
   }
 
   //Delete a record
   async remove(id: bigint): Promise<Boolean> {
     const cacheKey = this.module+"-findOne-"+id.toString();
-    let result = await this.repository.remove(id);
+    let result = this.repository.remove(id);
     this.cacheService.del(cacheKey);
-    return result;
+    return result ? true : false;
   }
 }
