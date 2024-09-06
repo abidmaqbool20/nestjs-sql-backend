@@ -7,11 +7,11 @@ import { UpdateDto } from './dto/update.dto';
 import { DeleteDto } from './dto/delete.dto';
 import { Permission } from './entities/permission.entity';
 import { Request, Response } from 'express';
-import { CustomLoggerService } from '@/logger/logger.service';
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
-import { ResponseService } from '@/global/response.service';
-import { AppPermissionsGuard } from '@/modules/auth/permissions.guard';
-import { AppPermissions } from '@/modules/auth/permissions.decorator';
+import { CustomLoggerService } from '../../logger/logger.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ResponseService } from '../../global/response.service';
+import { AppPermissionsGuard } from '../auth/permissions.guard';
+import { AppPermissions } from '../auth/permissions.decorator';
 
 @ApiTags('Permissions')
 @UseGuards(JwtAuthGuard,AppPermissionsGuard)

@@ -3,81 +3,89 @@ import { User } from './entities/user.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { UsersRepository } from './users.repository';
-import { CacheService } from '@/cache/node.cache';
-import { GeneralHelper } from '@/helpers/general.helper';
+import { RedisService } from '../../cache/redis.service';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   private readonly module = 'users';
+  private readonly cacheDuration = 36000; // Cache duration in seconds
+
   constructor(
     private readonly repository: UsersRepository,
-    private readonly cacheService: CacheService
+    private readonly redisService: RedisService,
   ) {}
 
   async onModuleInit() {
     // Initialization if needed
   }
 
-  //Create a record
-  async create(data: CreateDto): Promise<Boolean>  {
-    const cacheKey = this.module+"-findAll";
+  // Create a record
+  async create(data: CreateDto): Promise<User> {
+    const cacheKey = `${this.module}-findAll`;
     let created = await this.repository.create(data);
-    if(created){
-      this.cacheService.del(cacheKey);
+    if (created) {
+      await this.redisService.getClient().del(cacheKey);
     }
-    return created ? true : false;
+    return created;
   }
 
-  //Fetch all listings
-  async findAll(): Promise<User[]>  {
-    const cacheKey = this.module+"-findAll";
-    if (!this.cacheService.has(cacheKey)) {
-      let result = await this.repository.findAll();
-      this.cacheService.set(cacheKey, result, 36000);
+  // Fetch all listings
+  async findAll(): Promise<User[]> {
+    const cacheKey = `${this.module}-findAll`;
+    let result = await this.redisService.getJsonValue<User[]>(cacheKey);
+
+    if (!result) {
+      result = await this.repository.findAll();
+      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
     }
-    return this.cacheService.get(cacheKey);
+
+    return result;
   }
 
-  //Find Single Record
-  async findOne(id: bigint): Promise<User>  {
-    const cacheKey = this.module+"-findOne-"+id;
-    if (!this.cacheService.has(cacheKey)) {
-      let result = await this.repository.findOne(id);
-      this.cacheService.set(cacheKey, result, 36000);
+  // Find Single Record
+  async findOne(id: bigint): Promise<User> {
+    const cacheKey = `${this.module}-findOne-${id}`;
+    let result = await this.redisService.getJsonValue<User>(cacheKey);
+
+    if (!result) {
+      result = await this.repository.findOne(id);
+      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
     }
-    return this.cacheService.get(cacheKey);
+
+    return result;
   }
 
-  //Find by Username
+  // Find by Username
   async findByUsername(username: string): Promise<User> {
-    const cacheKey = this.module+"-findByUsername-"+username;
-    if (!this.cacheService.has(cacheKey)) {
-      let result = await this.repository.findByUsername(username);
-      this.cacheService.set(cacheKey, result, 36000);
+    const cacheKey = `${this.module}-findByUsername-${username}`;
+    let result = await this.redisService.getJsonValue<User>(cacheKey);
+
+    if (!result) {
+      result = await this.repository.findByUsername(username);
+      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
     }
-    return this.cacheService.get(cacheKey);
+
+    return result;
   }
 
-  //Update record
-  async update(id: bigint, userData: UpdateDto): Promise<Boolean> {
-
+  // Update record
+  async update(id: bigint, userData: UpdateDto): Promise<User> {
     let result = await this.repository.update(id, userData);
 
-    const cacheKey = this.module+"-findAll";
-    this.cacheService.del(cacheKey);
+    const cacheKeyFindAll = `${this.module}-findAll`;
+    const cacheKeyFindOne = `${this.module}-findOne-${id}`;
 
-    const findOneCacheKey = this.module+"-findByUsername-"+id.toString();
-    this.cacheService.del(findOneCacheKey);
+    await this.redisService.getClient().del(cacheKeyFindAll);
+    await this.redisService.getClient().del(cacheKeyFindOne);
 
     return result;
-
   }
 
-  //Delete a record
-  async remove(id: bigint): Promise<Boolean> {
-    const cacheKey = this.module+"-findOne-"+id.toString();
-    let result = await this.repository.remove(id);
-    this.cacheService.del(cacheKey);
-    return result;
+  // Delete a record
+  async remove(id: bigint): Promise<boolean> {
+    const cacheKey = `${this.module}-findOne-${id}`;
+    const result = await this.repository.remove(id);
+    await this.redisService.getClient().del(cacheKey);
+    return result ? true : false;
   }
 }

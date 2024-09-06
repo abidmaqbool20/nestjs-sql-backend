@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '@/cache/node.cache';
+import { CacheService } from '../../cache/node.cache';
 import { config } from 'dotenv';
-config(); 
+config();
 
 @Injectable()
 export class TokenService {
   private readonly blacklistedTokens: Set<string> = new Set();
   private readonly cacheService: CacheService
-  
+
   addTokenToBlacklist(token: string) {
     this.blacklistedTokens.add(token);
   }

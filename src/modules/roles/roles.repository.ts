@@ -58,26 +58,33 @@ export class RolesRepository {
     return record;
   }
 
-  // Update record
-  async update(id: bigint, roleData: UpdateDto): Promise<Boolean> {
-    let result = false;
+ // Update record
+  async update(id: bigint, roleData: UpdateDto): Promise<Role> {
     const record = await this.findOne(id);
-    if (record) {
-      if (roleData.permissions) {
-        const permissionIds = roleData.permissions.map(id => String(id));
-        record.permissions = await this.permissionService.findByIds(permissionIds);
-      }
-
-      let updated = await this.RoleModel.update(id.toString(), {
-        name: roleData.name,
-        permissions: record.permissions
-      });
-
-      result = updated ? true : false;
+    if (!record) {
+      throw new Error('Role not found');
     }
 
-    return result;
+    if (roleData.permissions) {
+      const permissionIds = roleData.permissions.map(id => String(id));
+      record.permissions = await this.permissionService.findByIds(permissionIds);
+    }
+
+    // Perform the update operation
+    const updateResult = await this.RoleModel.update(id.toString(), {
+      name: roleData.name,
+      permissions: record.permissions
+    });
+
+    // Ensure the update was successful
+    if (!updateResult) {
+      throw new Error('Update failed');
+    }
+
+    // Return the updated record
+    return this.findOne(id);
   }
+
 
   // Delete a record
   async remove(id: bigint): Promise<Boolean> {

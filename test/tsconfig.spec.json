@@ -1,0 +1,11 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+      "outDir": "../dist/out-tsc",
+      "types": ["jest"],
+      "module": "commonjs", // Ensure this is set to commonjs
+      "target": "es2017"   // Ensure target is set to a suitable version
+    },
+    "include": ["../src/**/*.spec.ts", "../src/**/*.d.ts"],
+    "exclude": ["../node_modules", "../src/**/*.test.ts"]
+  }

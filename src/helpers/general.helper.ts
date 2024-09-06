@@ -2,12 +2,12 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { CacheService } from '@/cache/node.cache';
-
+import { CacheService } from '../cache/node.cache';
 @Injectable()
 export class GeneralHelper {
 
-  constructor() {}
+  constructor() {
+  }
 
   static async getUUID(): Promise<string> {
     return await uuidv4();
@@ -26,5 +26,4 @@ export class GeneralHelper {
       '/auth/register',
     ];
   }
-
 }

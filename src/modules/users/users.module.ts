@@ -4,16 +4,18 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
-import { LoggerModule } from '@/logger/logger.module';
-import { CacheService } from '@/cache/node.cache';
-import { ResponseService } from '@/global/response.service';
-import { AppPermissionsGuard } from '@/modules/auth/permissions.guard';
-import { AuthModule } from '@/modules/auth/auth.module';
+import { LoggerModule } from '../../logger/logger.module';
+import { CacheService } from '../../cache/node.cache';
+import { ResponseService } from '../../global/response.service';
+import { AppPermissionsGuard } from '../auth/permissions.guard';
+import { AuthModule } from '../auth/auth.module';
+import { RedisModule } from '../../cache/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     LoggerModule,
+    RedisModule,
     forwardRef(() => AuthModule), // Correctly handle circular dependencies
   ],
   providers: [
@@ -21,7 +23,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
     UsersRepository,
     CacheService,
     ResponseService,
-    AppPermissionsGuard, // The guard can now resolve JwtService
+    AppPermissionsGuard,
   ],
   controllers: [UsersController],
   exports: [UsersService, UsersRepository],

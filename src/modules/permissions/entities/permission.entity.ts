@@ -5,7 +5,7 @@ export class Permission {
   @PrimaryGeneratedColumn()
   id: bigint;
 
-  @Column({ unique: true })
+  @Column({  unique: true, type: 'varchar', nullable: false })
   name: string;
 
 

@@ -55,14 +55,18 @@ export class PermissionsRepository {
 
 
   // Update record
-  async update(id: bigint, permissionData: UpdateDto): Promise<Boolean> {
+  async update(id: bigint, permissionData: UpdateDto): Promise<Permission> {
     let result = false;
     const record = await this.findOne(id);
     if (record) {
       let updated = await this.PermissionModel.update(id.toString(), permissionData);
-      result = updated ? true : false;
+      if (!updated) {
+        throw new Error('Update failed');
+      }
+      return this.findOne(id);
     }
-    return result;
+
+    throw new Error('Update failed');
   }
 
   // Delete a record

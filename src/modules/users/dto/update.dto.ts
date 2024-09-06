@@ -2,6 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateDto } from './create.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEmail, IsDate } from 'class-validator';
+import {Role} from '../../roles/entities/role.entity'
 
 export class UpdateDto extends PartialType(CreateDto) {
 
@@ -29,4 +30,8 @@ export class UpdateDto extends PartialType(CreateDto) {
   @IsOptional()
   @IsDate()
   updated_at?: Date;
+
+  @IsOptional()
+  @IsDate()
+  roles: Role[];
 }

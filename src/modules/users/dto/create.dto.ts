@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsEmail, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
+import {Role} from '../../roles/entities/role.entity'
 export class CreateDto {
 
   @ApiProperty({ description: 'The name of the user' })
@@ -23,4 +23,8 @@ export class CreateDto {
   @IsOptional()
   @IsDate()
   updated_at: Date;
+
+  @IsOptional()
+  @IsDate()
+  roles: Role[];
 }

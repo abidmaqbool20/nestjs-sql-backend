@@ -39,9 +39,11 @@ In this repository you will get:
 - Typeorm
 - Migrations implementation
 - Roles and Permissions Implementation
-- Migrations
+- (Users, Roles, Permissions) Modules Migrations
+- Database Seeder implementation
 - Crud Operations on User Module
 - Node Cache
+- Redis Cache
 - API Documenation (Swagger)
 - API Reqeust Responses
 

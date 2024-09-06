@@ -42,14 +42,15 @@ export class UsersRepository {
   }
 
   // Update record
-  async update(id: bigint, userData: UpdateDto): Promise<Boolean> {
-    let result = false;
+  async update(id: bigint, userData: UpdateDto): Promise<User> {
     const user = await this.findOne(id);
     if (user) {
-      let updated = await this.UserModel.update(id.toString(), userData);
-      result = updated ? true : false;
+      const updated = await this.UserModel.update(id.toString(), userData);
+      if (updated) {
+        return this.findOne(id);
+      }
     }
-    return result;
+    throw new Error('User not found or update failed');
   }
 
   // Delete a record

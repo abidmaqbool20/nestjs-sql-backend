@@ -2,11 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from './jwt-payload.interface';
-import { AuthRepository } from '@/modules/auth/auth.repository';
+import { AuthRepository } from './auth.repository';
 import { TokenService } from './token.service';
 import { Request } from 'express';
 import { config } from 'dotenv';
-config(); 
+config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(request: Request, payload: JwtPayload) { 
+  async validate(request: Request, payload: JwtPayload) {
 
     const authorizationHeader = request.headers.authorization;
     if (!authorizationHeader) {

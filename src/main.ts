@@ -3,17 +3,21 @@ import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import { HttpExceptionFilter } from '@/config/http-exception.filter';
-import { CustomLoggerService } from '@/logger/logger.service'; 
+import { HttpExceptionFilter } from './config/http-exception.filter';
+import { CustomLoggerService } from './logger/logger.service';
 import { config } from 'dotenv';
 
 config();
-
+function loadEnv() {
+  const env = process.env.NODE_ENV || 'development';
+  config({ path: `.env.${env}` });
+}
 async function bootstrap() {
+  loadEnv();
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS if needed
-  // app.enableCors(); 
+  // app.enableCors();
 
   app.useGlobalFilters(new HttpExceptionFilter(new CustomLoggerService()));
   initHelmet(app);

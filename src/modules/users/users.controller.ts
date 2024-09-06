@@ -8,11 +8,11 @@ import { Request, Response } from 'express';
 import { GetDto } from './dto/get.dto';
 import { DeleteDto } from './dto/delete.dto';
 import { User } from './entities/user.entity';
-import { CustomLoggerService } from '@/logger/logger.service';
-import { ResponseService } from '@/global/response.service';
-import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
-import { AppPermissionsGuard } from '@/modules/auth/permissions.guard';
-import { AppPermissions } from '@/modules/auth/permissions.decorator';
+import { CustomLoggerService } from '../../logger/logger.service';
+import { ResponseService } from '../..//global/response.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AppPermissionsGuard } from '../auth/permissions.guard';
+import { AppPermissions } from '../auth/permissions.decorator';
 
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard, AppPermissionsGuard)
