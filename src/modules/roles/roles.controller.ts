@@ -103,9 +103,9 @@ export class RolesController {
 
   // Update API
   @Patch(':id')
-  @AppPermissions('view-role')
+  @AppPermissions('update-role')
   @ApiOperation({ summary: 'Update a role by ID' })
-  @ApiParam({ name: 'id', description: 'Role ID', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Role ID', type: 'number'})
   @ApiBody({ type: UpdateDto })
   @ApiResponse({ status: 200, description: 'Role updated', type: Role })
   @ApiResponse({ status: 404, description: 'Role not found' })
@@ -132,7 +132,7 @@ export class RolesController {
   @Delete(':id')
   @AppPermissions('delete-role')
   @ApiOperation({ summary: 'Delete a role by ID' })
-  @ApiParam({ name: 'id', description: 'Role ID', type: 'number' })
+  @ApiParam({ name: 'id', description: 'Role ID', type: 'number'})
   @ApiBody({ type: DeleteDto })
   @ApiResponse({ status: 204, description: 'Role deleted' })
   @ApiResponse({ status: 404, description: 'Role not found' })

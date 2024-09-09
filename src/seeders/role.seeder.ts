@@ -25,6 +25,8 @@ export async function seed() {
         'update-permission',
         'delete-permission',
         'view-permission',
+        'view-subscription',
+        'update-subscription',
       ],
     },
     {
@@ -38,7 +40,7 @@ export async function seed() {
     },
     {
       name: 'Member',
-      permissions: [],
+      permissions: ['view-subscription','update-subscription'],
     },
   ];
 

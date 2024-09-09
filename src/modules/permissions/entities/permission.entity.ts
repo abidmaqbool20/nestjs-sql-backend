@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { CreateDto } from '../dto/create.dto';
 @Entity('permissions')
 export class Permission {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: bigint;
 
   @Column({  unique: true, type: 'varchar', nullable: false })

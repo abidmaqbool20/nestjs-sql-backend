@@ -33,6 +33,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   async create(@Body(new ValidationPipe({ transform: true, whitelist: true })) data: CreateDto, @Res() res: Response) {
     try {
+      console.log(data);
       let result =  await this.moduleService.create(data);
       res.status(HttpStatus.BAD_REQUEST);
       let message = 'Unsuccessful. Error occurred!';
@@ -118,7 +119,8 @@ export class UsersController {
   @Delete(':id')
   @AppPermissions('delete-user')
   @ApiOperation({ summary: 'Delete a user by ID' })
-  @ApiParam({ name: 'id', description: 'User ID', type: 'number' })
+  @ApiParam({ name: 'id', description: 'User ID', type: 'number'})
+  @ApiBody({ type: DeleteDto })
   @ApiResponse({ status: 204, description: 'User deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ValidationPipe({ transform: true }))

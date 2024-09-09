@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn , ManyToMany, JoinTable} from 'typeorm';
 import { CreateDto } from '../dto/create.dto';
-import { GeneralHelper } from '../../../helpers/general.helper';
 import { Role } from '../../roles/entities/role.entity';
 
 @Entity('users')

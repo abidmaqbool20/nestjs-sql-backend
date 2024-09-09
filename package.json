@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "npm run migration:run:test && npm run seed:test && jest",
+    "test": "jest",
     "test:watch": "npm run migration:run:test && jest --watch",
     "test:cov": "npm run migration:run:test && jest --coverage",
     "test:debug": "npm run migration:run:test && node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

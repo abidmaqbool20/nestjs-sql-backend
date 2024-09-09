@@ -4,11 +4,13 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { RolesRepository } from './roles.repository';
 import { RedisService } from '../../cache/redis.service';
+import { GeneralHelper } from '../../helpers/general.helper';
 
 @Injectable()
 export class RolesService implements OnModuleInit {
   private readonly module = 'roles';
   private readonly cacheDuration = 36000;
+  private helper:GeneralHelper;
 
   constructor(
     private readonly repository: RolesRepository,
@@ -16,15 +18,16 @@ export class RolesService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // Initialization if needed
+    this.helper = new GeneralHelper;
   }
+
 
   // Create a record
   async create(data: CreateDto): Promise<Role> {
     const cacheKey = `${this.module}-findAll`;
     const result = await this.repository.create(data);
     if (result) {
-      await this.redisService.getClient().del(cacheKey);
+      await this.helper.delCache([`${this.module}-findAll`]);
     }
     return result;
   }
@@ -32,10 +35,10 @@ export class RolesService implements OnModuleInit {
   // Fetch all listings
   async findAll(): Promise<Role[]> {
     const cacheKey = `${this.module}-findAll`;
-    let result = await this.redisService.getJsonValue<Role[]>(cacheKey);
+    let result = await this.helper.getCache<Role[]>(cacheKey);
     if (!result) {
       result = await this.repository.findAll();
-      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
+      await this.helper.doCache(cacheKey, result, this.cacheDuration);
     }
     return result;
   }
@@ -43,10 +46,10 @@ export class RolesService implements OnModuleInit {
   // Find Single Record
   async findOne(id: bigint): Promise<Role> {
     const cacheKey = `${this.module}-findOne-${id}`;
-    let result = await this.redisService.getJsonValue<Role>(cacheKey);
+    let result = await this.helper.getCache<Role>(cacheKey);
     if (!result) {
       result = await this.repository.findOne(id);
-      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
+      await this.helper.doCache(cacheKey, result, this.cacheDuration);
     }
     return result;
   }
@@ -54,10 +57,10 @@ export class RolesService implements OnModuleInit {
   // Find by Name
   async findByName(name: string): Promise<Role> {
     const cacheKey = `${this.module}-findByName-${name}`;
-    let result = await this.redisService.getJsonValue<Role>(cacheKey);
+    let result = await this.helper.getCache<Role>(cacheKey);
     if (!result) {
       result = await this.repository.findByName(name);
-      await this.redisService.setJsonValue(cacheKey, result, this.cacheDuration);
+      await this.helper.doCache(cacheKey, result, this.cacheDuration);
     }
     return result;
   }
@@ -65,21 +68,19 @@ export class RolesService implements OnModuleInit {
   // Update record
   async update(id: bigint, userData: UpdateDto): Promise<Role> {
     const result = await this.repository.update(id, userData);
-
-    const cacheKey = `${this.module}-findAll`;
-    await this.redisService.getClient().del(cacheKey);
-
-    const findOneCacheKey = `${this.module}-findOne-${id}`;
-    await this.redisService.getClient().del(findOneCacheKey);
-
+    await this.helper.delCache([`${this.module}-findAll`, `${this.module}-findOne-${id}`]);
     return result;
   }
 
   // Delete a record
   async remove(id: bigint): Promise<boolean> {
-    const cacheKey = `${this.module}-findOne-${id}`;
+    let status = false;
+    let rec = await this.findOne(id);
     const result = await this.repository.remove(id);
-    await this.redisService.getClient().del(cacheKey);
-    return result ? true : false;
+    status = result ? true : false;
+    if(status){
+      await this.helper.delCache([`${this.module}-findOne-${id}`,`${this.module}-findByIds`,`${this.module}-findAll`,`${this.module}-findByName-${rec.name}`]);
+    }
+    return status;
   }
 }

@@ -1,4 +1,3 @@
-// jest.setup.ts
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.test' }); // Ensure this points to your test environment file
 
@@ -10,10 +9,10 @@ let dataSource: DataSource;
 beforeAll(async () => {
   try {
     dataSource = await AppTestDataSource.initialize();
-    await dataSource.runMigrations();
-    await dataSource.synchronize(true);
+    // await dataSource.runMigrations(); // If needed
+    await dataSource.synchronize(true); // Synchronize schema
   } catch (error) {
-    console.log('Error setting up DataSource:', error);
+    console.error('Error setting up DataSource:', error);
     throw error;
   }
 });

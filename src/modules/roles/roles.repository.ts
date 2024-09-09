@@ -60,31 +60,29 @@ export class RolesRepository {
 
  // Update record
   async update(id: bigint, roleData: UpdateDto): Promise<Role> {
+    // Find the existing role
     const record = await this.findOne(id);
     if (!record) {
       throw new Error('Role not found');
     }
 
+    // Update role fields
+    if (roleData.name) {
+      record.name = roleData.name;
+    }
+
+    // Update many-to-many relationship (permissions)
     if (roleData.permissions) {
-      const permissionIds = roleData.permissions.map(id => String(id));
-      record.permissions = await this.permissionService.findByIds(permissionIds);
+      const permissionIds = roleData.permissions.map(id => id.toString());
+      const permissions = await this.permissionService.findByIds(permissionIds);
+      record.permissions = permissions; // Set the new permissions
     }
 
-    // Perform the update operation
-    const updateResult = await this.RoleModel.update(id.toString(), {
-      name: roleData.name,
-      permissions: record.permissions
-    });
+    // Save the updated role entity (this will handle updating the many-to-many relationship)
+    const updatedRole = await this.RoleModel.save(record);
 
-    // Ensure the update was successful
-    if (!updateResult) {
-      throw new Error('Update failed');
-    }
-
-    // Return the updated record
-    return this.findOne(id);
+    return updatedRole;
   }
-
 
   // Delete a record
   async remove(id: bigint): Promise<Boolean> {

@@ -74,7 +74,7 @@ export class PermissionsController {
   @Get(':id')
   @AppPermissions('view-permission')
   @ApiOperation({ summary: 'Get a permission by ID' })
-  @ApiParam({ name: 'id', description: 'Permission ID', type: 'string' })
+  @ApiParam({ name: 'id', description: 'Permission ID', type: 'number' })
   @ApiResponse({ status: 200, description: 'Permission found', type: Permission })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -99,7 +99,7 @@ export class PermissionsController {
   @Patch(':id')
   @AppPermissions('update-permission')
   @ApiOperation({ summary: 'Update a permission by ID' })
-  @ApiParam({ name: 'id', description: 'Permission ID', type: 'string' })
+  @ApiParam({ name: 'id', description: 'Permission ID', type: 'number' })
   @ApiBody({ type: UpdateDto })
   @ApiResponse({ status: 200, description: 'Permission updated', type: Permission })
   @ApiResponse({ status: 404, description: 'Permission not found' })
@@ -125,14 +125,24 @@ export class PermissionsController {
   @Delete(':id')
   @AppPermissions('delete-permission')
   @ApiOperation({ summary: 'Delete a permission by ID' })
-  @ApiParam({ name: 'id', description: 'Permission ID', type: 'string' })
+  @ApiParam({ name: 'id', description: 'Permission ID', type: 'number' })
+  @ApiBody({ type: DeleteDto })
   @ApiResponse({ status: 204, description: 'Permission deleted' })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param() params: DeleteDto, @Res() res: Response) {
+    const { id } = params;
     try {
-      const permissionId = BigInt(id);
-      return await this.moduleService.remove(permissionId);
+      let result =  await this.moduleService.remove(id);
+      res.status(HttpStatus.BAD_REQUEST);
+      let message = 'Unsuccessful. Error occurred!';
+      if(result){
+        res.status(HttpStatus.OK);
+        message = 'successful';
+      }
+      return this.responseService.sendResponse(res,message,result);
+
+
     } catch (error) {
       this.logger.error(error, `An error occurred while deleting permission with id ${id}`);
       throw error;

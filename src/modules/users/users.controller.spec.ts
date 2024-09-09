@@ -1,28 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { CreateDto } from './dto/create.dto';
-import { User } from './entities/user.entity';
+import { RolesService } from '../roles/roles.service';
 import { ResponseService } from '../../global/response.service';
 import { CustomLoggerService } from '../../logger/logger.service';
 import { AuthModule } from '../auth/auth.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Role } from '../roles/entities/role.entity';
 import { Response } from 'express';
-import { DataSource } from 'typeorm';
-import { AppTestDataSource } from '../../config/ormconfig.test';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
+  let rolesService: RolesService;
   let responseService: ResponseService;
   let logger: CustomLoggerService;
-  let dataSource: DataSource;
 
   beforeEach(async () => {
-    dataSource = await AppTestDataSource.initialize();
-    await dataSource.synchronize(true);
-
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule],
+      imports: [AuthModule, TypeOrmModule.forFeature([User, Role])],
       controllers: [UsersController],
       providers: [
         {
@@ -33,6 +30,12 @@ describe('UsersController', () => {
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: RolesService,
+          useValue: {
+            findOneRole: jest.fn(),
           },
         },
         {
@@ -52,6 +55,7 @@ describe('UsersController', () => {
 
     controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
+    rolesService = module.get<RolesService>(RolesService);
     responseService = module.get<ResponseService>(ResponseService);
     logger = module.get<CustomLoggerService>(CustomLoggerService);
   });
@@ -62,45 +66,22 @@ describe('UsersController', () => {
 
   describe('create', () => {
     it('should successfully create a user', async () => {
-
-      const permissions = [
-        {
-          id: BigInt(1),
-          name: 'create-user',
-        },
-        {
-          id: BigInt(2),
-          name: 'update-user',
-        },
-        {
-          id: BigInt(3),
-          name: 'view-user',
-        },
-        {
-          id: BigInt(4),
-          name: 'view-user',
-        }
-      ];
-
-
-
-      const role = {
-        id: BigInt(1),
-        name: 'Admin',
-        permissions: permissions
-      };
-
-
-      const createUserDto: CreateDto = {
+      const createUserDto = {
         name: 'John Doe',
         email: 'john@example.com',
         password: 'secret123',
         created_at: new Date(),
         updated_at: new Date(),
-        roles:[role],
+        roles: [
+          {
+            id: BigInt(1),
+            name: 'Admin',
+            permissions: [{ id: BigInt(1), name: 'Create User' }]
+          }
+        ],
       };
 
-      const result: User = {
+      const result = {
         id: BigInt(1),
         ...createUserDto,
       };
@@ -119,10 +100,9 @@ describe('UsersController', () => {
 
       expect(service.create).toHaveBeenCalledWith(createUserDto);
       expect(responseService.sendResponse).toHaveBeenCalledWith(res, 'successful', result);
-      expect(response).toEqual(result); // Ensure the response matches the expected result
+      expect(response).toEqual(result);
     });
   });
-
   // describe('findAll', () => {
   //   it('should return all users', async () => {
   //     const users: User[] = [

@@ -21,6 +21,8 @@ export async function seed() {
         'update-permission',
         'delete-permission',
         'view-permission',
+        'view-subscription',
+        'update-subscription',
     ];
 
     // Prepare role objects
