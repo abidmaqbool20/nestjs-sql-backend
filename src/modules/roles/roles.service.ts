@@ -4,7 +4,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { RolesRepository } from './roles.repository';
 import { RedisService } from '../../cache/redis.service';
-import { GeneralHelper } from '../../helpers/general.helper';
+import { GeneralHelper } from '../../helpers/general.helper.service';
 
 @Injectable()
 export class RolesService implements OnModuleInit {

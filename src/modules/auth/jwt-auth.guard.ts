@@ -1,6 +1,6 @@
 import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {GeneralHelper} from '../../helpers/general.helper'
+import {GeneralHelper} from '../../helpers/general.helper.service'
 import { config } from 'dotenv';
 config();
 

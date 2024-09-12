@@ -4,21 +4,22 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { UsersRepository } from './users.repository';
 import { RedisService } from '../../cache/redis.service';
-import { GeneralHelper } from '../../helpers/general.helper';
+import { GeneralHelper } from '../../helpers/general.helper.service';
 @Injectable()
-export class UsersService implements OnModuleInit {
+
+export class UsersService {
   private readonly module = 'users';
   private readonly cacheDuration = 36000; // Cache duration in seconds
-  private helper:GeneralHelper;
 
   constructor(
+    private helper:GeneralHelper,
     private readonly repository: UsersRepository,
     private readonly redisService: RedisService,
   ) {}
 
-  async onModuleInit() {
-    this.helper = new GeneralHelper;
-  }
+  // async onModuleInit() {
+  //   this.helper = new GeneralHelper;
+  // }
 
   // Create a record
   async create(data: CreateDto): Promise<User> {

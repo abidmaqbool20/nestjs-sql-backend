@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './jwt-payload.interface';
-import { GeneralHelper } from '../../helpers/general.helper';
+import { GeneralHelper } from '../../helpers/general.helper.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register.dto';
 import { CustomLoggerService } from '../../logger/logger.service';
@@ -17,7 +17,9 @@ config();
 @Injectable()
 export class AuthRepository {
 
+
   constructor(
+    private readonly helper:GeneralHelper,
     private readonly tokenService: TokenService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -25,6 +27,7 @@ export class AuthRepository {
     @InjectRepository(User)
     private readonly UserDBRepository: Repository<User>,
   ) {}
+
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.UserDBRepository.findOne({
@@ -73,6 +76,7 @@ export class AuthRepository {
     });
 
     await this.UserDBRepository.save(newUser);
+    await this.helper.delCache([`users-findAll`]);
     return newUser;
   }
 

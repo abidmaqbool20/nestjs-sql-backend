@@ -10,12 +10,14 @@ import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { ResponseService } from '../../global/response.service';
 import { AuthModule } from '../auth/auth.module';
 import { RedisModule } from '../../cache/redis.module';
+import { HelpersModule } from '../../helpers/helpers.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Permission]),
     LoggerModule,
     RedisModule,
+    HelpersModule,
     forwardRef(() => AuthModule),
   ],
   providers: [

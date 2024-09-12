@@ -16,19 +16,19 @@ import { ResponseService } from '../../global/response.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { RedisModule } from '../../cache/redis.module';
-
+import { HelpersModule } from '../../helpers/helpers.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     LoggerModule,
     RedisModule,
+    HelpersModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'aY1le56893WRjtAQyzMemUUq3RfreGYJY1iL',
       signOptions: { algorithm :  'HS256', expiresIn: process.env.JWT_TOKEN_EXPIRE_TIME || '1h'  },
     }),
     forwardRef(() => UsersModule),
-
   ],
   providers: [
     AuthService,

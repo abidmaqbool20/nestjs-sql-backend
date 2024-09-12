@@ -16,6 +16,7 @@ import { PassportModule } from '@nestjs/passport';
 import { CacheService } from './cache/node.cache';
 import { ResponseService } from './global/response.service';
 import { loadDatabaseModule } from './db/db-loader';
+import { HelpersModule } from './helpers/helpers.module';
 
 let DBModule = loadDatabaseModule();
 
@@ -29,6 +30,7 @@ let DBModule = loadDatabaseModule();
     LoggerModule,
     PermissionsModule,
     RolesModule,
+    HelpersModule,
   ],
   controllers: [AppController],
   providers: [
