@@ -1,5 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module, forwardRef, Global  } from '@nestjs/common';
 import { GeneralHelper } from './general.helper.service';
 import { LoggerModule } from '../logger/logger.module';
 import { CacheService } from '../cache/node.cache';
@@ -8,6 +7,7 @@ import { ResponseService } from '../global/response.service';
 import { AuthModule } from '../modules/auth/auth.module';
 import { RedisModule } from '../cache/redis.module';
 
+@Global()
 @Module({
   imports: [
     LoggerModule,

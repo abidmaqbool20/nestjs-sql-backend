@@ -52,7 +52,6 @@ export class GeneralHelper {
   }
 
   async getCache<T>(key: string): Promise<T | null> {
-    // this.redisService = new RedisService();
     return await this.redisService.getJsonValue(key);
   }
 
