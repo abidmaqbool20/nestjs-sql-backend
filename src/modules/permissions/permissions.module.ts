@@ -4,7 +4,7 @@ import { PermissionsService } from './permissions.service';
 import { PermissionsController } from './permissions.controller';
 import { Permission } from './entities/permission.entity';
 import { PermissionsRepository } from './permissions.repository';
-import { LoggerModule } from '../../global/logger/logger.module';
+import { LoggerModule } from '../global/logger/logger.module';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AuthModule } from '../auth/auth.module';
 

@@ -3,8 +3,8 @@ import { Permission } from './entities/permission.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { PermissionsRepository } from './permissions.repository';
-import { RedisService } from '../../global/cache/redis.service';
-import { GeneralHelper } from '../../global/helper/general.helper.service';
+import { RedisService } from '../global/cache/redis.service';
+import { GeneralHelper } from '../global/helper/general.helper.service';
 
 @Injectable()
 export class PermissionsService implements OnModuleInit {

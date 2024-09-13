@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { GeneralHelper } from '../../global/helper/general.helper.service'
+import { GeneralHelper } from '../global/helper/general.helper.service'
 import { LoginDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register.dto';
 import { AuthRepository } from './auth.repository';

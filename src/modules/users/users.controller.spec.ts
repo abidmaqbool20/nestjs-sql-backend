@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { RolesService } from '../roles/roles.service';
-import { ResponseService } from '../../global/response/response.service';
-import { CustomLoggerService } from '../../global/logger/logger.service';
+import { ResponseService } from '../global/response/response.service';
+import { CustomLoggerService } from '../global/logger/logger.service';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Role } from '../roles/entities/role.entity';
-import { Response } from 'express';
+import { FastifyReply } from 'fastify'; // Import FastifyReply
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -91,132 +91,131 @@ describe('UsersController', () => {
         return data;
       });
 
-      const res = {
+      const mockReply = {
         status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
+        send: jest.fn(), // Fastify uses send() instead of json()
+      } as unknown as FastifyReply;
 
-      const response = await controller.create(createUserDto, res);
+      const response = await controller.create(createUserDto, mockReply);
 
       expect(service.create).toHaveBeenCalledWith(createUserDto);
-      expect(responseService.sendResponse).toHaveBeenCalledWith(res, 'successful', result);
+      expect(responseService.sendResponse).toHaveBeenCalledWith(mockReply, 'successful', result);
       expect(response).toEqual(result);
     });
   });
-  // describe('findAll', () => {
-  //   it('should return all users', async () => {
-  //     const users: User[] = [
-  //       {
-  //         id: BigInt(1),
-  //         name: 'Test User',
-  //         email: 'test@example.com',
-  //         password: 'password123',
-  //         created_at: new Date(),
-  //         updated_at: new Date(),
-  //         roles: [], // Ensure roles property is present
-  //       },
-  //     ];
-  //     jest.spyOn(service, 'findAll').mockResolvedValue(users);
 
-  //     const mockResponse = {
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn(),
-  //     } as unknown as Response;
+  describe('findAll', () => {
+    it('should return all users', async () => {
+      const users: User[] = [
+        {
+          id: BigInt(1),
+          name: 'Test User',
+          email: 'test@example.com',
+          password: 'password123',
+          created_at: new Date(),
+          updated_at: new Date(),
+          roles: [], // Ensure roles property is present
+        },
+      ];
+      jest.spyOn(service, 'findAll').mockResolvedValue(users);
 
-  //     await controller.findAll(mockResponse);
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(), // Fastify uses send() instead of json()
+      } as unknown as FastifyReply;
 
-  //     expect(service.findAll).toHaveBeenCalled();
-  //     expect(responseService.sendResponse).toHaveBeenCalledWith(
-  //       mockResponse,
-  //       'successful',
-  //       users
-  //     );
-  //   });
-  // });
+      await controller.findAll(mockReply);
 
+      expect(service.findAll).toHaveBeenCalled();
+      expect(responseService.sendResponse).toHaveBeenCalledWith(
+        mockReply,
+        'successful',
+        users
+      );
+    });
+  });
 
-  // describe('findOne', () => {
-  //   it('should return a user by ID', async () => {
-  //     const userId = BigInt(1);
-  //     const user: User = {
-  //       id: userId,
-  //       name: 'Test User',
-  //       email: 'test@example.com',
-  //       password: 'password123',
-  //       created_at: new Date(),
-  //       updated_at: new Date(),
-  //       roles: [], // Ensure roles property is present
-  //     };
-  //     jest.spyOn(service, 'findOne').mockResolvedValue(user);
+  describe('findOne', () => {
+    it('should return a user by ID', async () => {
+      const userId = BigInt(1);
+      const user: User = {
+        id: userId,
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123',
+        created_at: new Date(),
+        updated_at: new Date(),
+        roles: [], // Ensure roles property is present
+      };
+      jest.spyOn(service, 'findOne').mockResolvedValue(user);
 
-  //     const mockResponse = {
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn(),
-  //     } as unknown as Response;
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(), // Fastify uses send() instead of json()
+      } as unknown as FastifyReply;
 
-  //     await controller.findOne(userId, mockResponse);
+      await controller.findOne(userId, mockReply);
 
-  //     expect(service.findOne).toHaveBeenCalledWith(userId);
-  //     expect(responseService.sendResponse).toHaveBeenCalledWith(
-  //       mockResponse,
-  //       'successful',
-  //       user
-  //     );
-  //   });
-  // });
+      expect(service.findOne).toHaveBeenCalledWith(userId);
+      expect(responseService.sendResponse).toHaveBeenCalledWith(
+        mockReply,
+        'successful',
+        user
+      );
+    });
+  });
 
+  describe('update', () => {
+    it('should update a user by ID', async () => {
+      const userId = BigInt(1);
+      const updateUserDto = {
+        name: 'Updated User',
+        email: 'updated@example.com',
+        password: 'updated123',
+        created_at: new Date(),
+        updated_at: new Date(),
+        roles:[]
+      };
+      const updatedUser: User = { id: userId, ...updateUserDto, roles: [] };
 
-  // describe('update', () => {
-  //   it('should update a user by ID', async () => {
-  //     const userId = BigInt(1);
-  //     const updateUserDto: CreateDto = {
-  //       name: 'Updated User',
-  //       email: 'updated@example.com',
-  //       password: 'updated123',
-  //       created_at: new Date(),
-  //       updated_at: new Date(),
-  //     };
-  //     const updatedUser: User = { id: userId, ...updateUserDto, roles: [] };
+      jest.spyOn(service, 'update').mockResolvedValue(updatedUser);
 
-  //     jest.spyOn(service, 'update').mockResolvedValue(updatedUser);
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(), // Fastify uses send() instead of json()
+      } as unknown as FastifyReply;
 
-  //     const mockResponse = {
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn(),
-  //     } as unknown as Response;
+      await controller.update(userId, updateUserDto, mockReply);
 
-  //     await controller.update(userId, updateUserDto, mockResponse);
+      expect(service.update).toHaveBeenCalledWith(userId, updateUserDto);
+      expect(responseService.sendResponse).toHaveBeenCalledWith(
+        mockReply,
+        'successful',
+        updatedUser
+      );
+    });
+  });
 
-  //     expect(service.update).toHaveBeenCalledWith(userId, updateUserDto);
-  //     expect(responseService.sendResponse).toHaveBeenCalledWith(
-  //       mockResponse,
-  //       'successful',
-  //       updatedUser
-  //     );
-  //   });
-  // });
+  describe('remove', () => {
+    it('should delete a user by ID', async () => {
+      const userId = BigInt(1);
+      const deleteResult = true; // Assuming `remove` returns a boolean indicating success
 
-  // describe('remove', () => {
-  //   it('should delete a user by ID', async () => {
-  //     const userId = BigInt(1);
-  //     const deleteResult = true; // Assuming `remove` returns a boolean indicating success
+      jest.spyOn(service, 'remove').mockResolvedValue(deleteResult);
 
-  //     jest.spyOn(service, 'remove').mockResolvedValue(deleteResult);
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(), // Fastify uses send() instead of json()
+      } as unknown as FastifyReply;
 
-  //     const mockResponse = {
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn(),
-  //     } as unknown as Response;
+      await controller.remove({ id: userId }, mockReply);
 
-  //     await controller.remove({ id: userId }, mockResponse);
-
-  //     expect(service.remove).toHaveBeenCalledWith(userId);
-  //     expect(responseService.sendResponse).toHaveBeenCalledWith(
-  //       mockResponse,
-  //       'successful',
-  //       deleteResult
-  //     );
-  //   });
-  // });
-
+      expect(service.remove).toHaveBeenCalledWith(userId);
+      expect(responseService.sendResponse).toHaveBeenCalledWith(
+        mockReply,
+        'successful',
+        deleteResult
+      );
+    });
+  });
 });

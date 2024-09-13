@@ -1,6 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { CustomLoggerService } from '../global/logger/logger.service';
+import { CustomLoggerService } from '../modules/global/logger/logger.service';
 import { QueryFailedError } from 'typeorm';
+import { FastifyReply } from 'fastify'; // Import FastifyReply
+import { Request } from 'express'; // Import Request if needed for context logging
 
 @Catch(HttpException, QueryFailedError)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -8,25 +10,33 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException | QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-    const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.BAD_REQUEST;
-    const exceptionResponse = exception instanceof HttpException ? exception.getResponse() : exception.message;
+    const response = ctx.getResponse<FastifyReply>(); // Get FastifyReply
+    const request = ctx.getRequest<Request>(); // Get the request for logging purposes
 
-    // Extract message from exception response
+    // Determine the HTTP status
+    const status = exception instanceof HttpException
+      ? exception.getStatus()
+      : HttpStatus.BAD_REQUEST;
+
+    // Extract the response message
+    const exceptionResponse = exception instanceof HttpException
+      ? exception.getResponse()
+      : exception.message;
+
     const message = typeof exceptionResponse === 'string'
       ? exceptionResponse
       : (exceptionResponse as any).message || 'Unknown error';
 
-    // Log the exception details
+    // Log the error
     this.logger.error(`HTTP Exception: ${message}`, {
       statusCode: status,
       timestamp: new Date().toISOString(),
-      path: ctx.getRequest().url,
+      path: request.url, // Log the request path
       stack: exception instanceof Error ? exception.stack : undefined,
     });
 
-    // Send the response to the client
-    response.status(status).json({
+    // Send the response using Fastify's send() method
+    response.status(status).send({
       statusCode: status,
       message,
     });

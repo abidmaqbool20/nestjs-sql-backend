@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Res ,HttpStatus, UsePipes, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Res, HttpStatus, UsePipes, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { Request, Response } from 'express';
-import { GetDto } from './dto/get.dto';
+import { FastifyReply } from 'fastify';
 import { DeleteDto } from './dto/delete.dto';
 import { User } from './entities/user.entity';
-import { CustomLoggerService } from '../../global/logger/logger.service';
-import { ResponseService } from '../../global/response/response.service';
+import { CustomLoggerService } from '../global/logger/logger.service';
+import { ResponseService } from '../global/response/response.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AppPermissions } from '../auth/permissions.decorator';
@@ -31,7 +30,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: CreateDto })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-  async create(@Body(new ValidationPipe({ transform: true, whitelist: true })) data: CreateDto, @Res() res: Response) {
+  async create(@Body(new ValidationPipe({ transform: true, whitelist: true })) data: CreateDto, @Res() res: FastifyReply) {
     try {
       console.log(data);
       let result =  await this.moduleService.create(data);
@@ -41,7 +40,7 @@ export class UsersController {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
-      return this.responseService.sendResponse(res,message,result);
+      return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, 'An error occurred while creating user');
       throw error;
@@ -53,7 +52,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users', type: [User] })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  async findAll(@Res() res: Response) {
+  async findAll(@Res() res: FastifyReply) {
     try {
       let result = await this.moduleService.findAll();
       res.status(HttpStatus.BAD_REQUEST);
@@ -62,7 +61,7 @@ export class UsersController {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
-      return this.responseService.sendResponse(res,message,result);
+      return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, 'An error occurred while fetching all users');
       throw error;
@@ -76,7 +75,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User found', type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async findOne(@Param('id') id: bigint, @Res() res: Response) {
+  async findOne(@Param('id') id: bigint, @Res() res: FastifyReply) {
     try {
       let result = await this.moduleService.findOne(id);
       res.status(HttpStatus.BAD_REQUEST);
@@ -85,7 +84,7 @@ export class UsersController {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
-      return this.responseService.sendResponse(res,message,result);
+      return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, `An error occurred while fetching user with id ${id}`);
       throw error;
@@ -100,7 +99,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User updated', type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async update(@Param('id') id: bigint, @Body() data: UpdateDto, @Res() res: Response) {
+  async update(@Param('id') id: bigint, @Body() data: UpdateDto, @Res() res: FastifyReply) {
     try {
       let result = await this.moduleService.update(id, data);
       res.status(HttpStatus.BAD_REQUEST);
@@ -109,7 +108,7 @@ export class UsersController {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
-      return this.responseService.sendResponse(res,message,result);
+      return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, `An error occurred while updating user with id ${id}`);
       throw error;
@@ -124,7 +123,7 @@ export class UsersController {
   @ApiResponse({ status: 204, description: 'User deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async remove(@Param() params: DeleteDto, @Res() res: Response) {
+  async remove(@Param() params: DeleteDto, @Res() res: FastifyReply) {
     const { id } = params;
     try {
       let result = await this.moduleService.remove(id);
@@ -134,7 +133,7 @@ export class UsersController {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
-      return this.responseService.sendResponse(res,message,result);
+      return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, `An error occurred while deleting user with id ${id}`);
       throw error;

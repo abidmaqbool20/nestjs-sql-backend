@@ -2,7 +2,7 @@ import { Injectable, HttpStatus, OnModuleInit } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { RedisService } from '../cache/redis.service';
-import { MailService } from '../../global/mailer/mail.service';
+import { MailService } from '../mailer/mail.service';
 
 @Injectable()
 export class GeneralHelper {

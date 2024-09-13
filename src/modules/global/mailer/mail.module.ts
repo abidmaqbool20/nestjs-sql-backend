@@ -26,7 +26,7 @@ config();
         from: '"No Reply" <'+process.env.MAIL_FROM_ADDRESS+'>',
       },
       template: {
-        dir: join(__dirname, '../../templates/email'),
+        dir: join(__dirname, '../../../templates/email'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

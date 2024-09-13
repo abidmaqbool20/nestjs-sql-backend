@@ -3,7 +3,7 @@ import { User } from './entities/user.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { UsersRepository } from './users.repository';
-import { GeneralHelper } from '../../global/helper/general.helper.service';
+import { GeneralHelper } from '../global/helper/general.helper.service';
 @Injectable()
 
 export class UsersService {

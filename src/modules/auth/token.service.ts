@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '../../global/cache/node.cache';
+import { CacheService } from '../global/cache/node.cache';
 import { config } from 'dotenv';
 config();
 

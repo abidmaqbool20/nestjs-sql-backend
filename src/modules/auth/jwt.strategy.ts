@@ -4,8 +4,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { AuthRepository } from './auth.repository';
 import { TokenService } from './token.service';
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify'; // Import FastifyRequest
 import { config } from 'dotenv';
+
 config();
 
 @Injectable()
@@ -22,8 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(request: Request, payload: JwtPayload) {
-
+  async validate(request: FastifyRequest, payload: JwtPayload) { // Use FastifyRequest
     const authorizationHeader = request.headers.authorization;
     if (!authorizationHeader) {
       throw new UnauthorizedException('Authorization header is missing');
@@ -34,10 +34,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Token is missing');
     }
 
-    if (await this.tokenService.isTokenBlacklisted(token)) {
+    // Check if the token is blacklisted
+    const isBlacklisted = await this.tokenService.isTokenBlacklisted(token);
+    if (isBlacklisted) {
       throw new UnauthorizedException('Invalid token');
     }
 
+    // Return the payload containing user information
     return payload;
   }
 }

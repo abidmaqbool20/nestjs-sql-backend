@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './config/http-exception.filter';
-import { CustomLoggerService } from './global/logger/logger.service';
+import { CustomLoggerService } from './modules/global/logger/logger.service';
 import { config } from 'dotenv';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyHelmet from '@fastify/helmet';
@@ -18,7 +18,6 @@ function loadEnv() {
 async function bootstrap() {
   loadEnv();
 
-  // Initialize the app with Fastify instead of Express
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
