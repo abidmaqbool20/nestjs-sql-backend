@@ -46,6 +46,8 @@ In this repository you will get:
 - Redis Cache
 - API Documenation (Swagger)
 - API Reqeust Responses
+- Fastify implementation to handle huge amount of concurent requests
+- Email sending functionality using handelbar template parsing
 
 ## Installation
 
