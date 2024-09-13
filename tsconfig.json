@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -22,5 +22,12 @@
       "@/*": ["src/*"],
       "@@/*": ["./*"]
     }
-  }, 
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.hbs"  // Include .hbs files
+  ],
+  "exclude": [
+    "src/**/*.hbs"  // Exclude .hbs files from TypeScript compilation
+  ]
 }

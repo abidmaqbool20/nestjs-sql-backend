@@ -4,7 +4,7 @@ import { RolesService } from './roles.service';
 import { RolesController } from './roles.controller';
 import { Role } from './entities/role.entity';
 import { RolesRepository } from './roles.repository';
-import { LoggerModule } from '../../logger/logger.module';
+import { LoggerModule } from '../../global/logger/logger.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AuthModule } from '../auth/auth.module';

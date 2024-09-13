@@ -7,9 +7,9 @@ import { UpdateDto } from './dto/update.dto';
 import { DeleteDto } from './dto/delete.dto';
 import { Permission } from './entities/permission.entity';
 import { Request, Response } from 'express';
-import { CustomLoggerService } from '../../logger/logger.service';
+import { CustomLoggerService } from '../../global/logger/logger.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ResponseService } from '../../global/response.service';
+import { ResponseService } from '../../global/response/response.service';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AppPermissions } from '../auth/permissions.decorator';
 

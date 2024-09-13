@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './entities/user.entity';
 import { UsersRepository } from './users.repository';
-import { LoggerModule } from '../../logger/logger.module';
+import { LoggerModule } from '../../global/logger/logger.module';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AuthModule } from '../auth/auth.module';
 @Module({

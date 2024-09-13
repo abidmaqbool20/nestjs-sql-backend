@@ -3,22 +3,21 @@ import { Permission } from './entities/permission.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { PermissionsRepository } from './permissions.repository';
-import { RedisService } from '../../cache/redis.service';
-import { GeneralHelper } from '../../helpers/general.helper.service';
+import { RedisService } from '../../global/cache/redis.service';
+import { GeneralHelper } from '../../global/helper/general.helper.service';
 
 @Injectable()
 export class PermissionsService implements OnModuleInit {
 
   public readonly module = "permissions";
   private readonly cacheDuration = 36000;
-  private helper:GeneralHelper;
   constructor(
     private readonly repository: PermissionsRepository,
     private readonly redisService: RedisService,
+    private readonly helper: GeneralHelper,
   ) {}
 
   async onModuleInit() {
-    this.helper = new GeneralHelper;
   }
 
   // Create a record

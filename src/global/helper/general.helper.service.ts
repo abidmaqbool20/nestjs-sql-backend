@@ -1,14 +1,14 @@
 import { Injectable, HttpStatus, OnModuleInit } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { Request } from 'express';
-import { CacheService } from '../cache/node.cache';
 import { RedisService } from '../cache/redis.service';
+import { MailService } from '../../global/mailer/mail.service';
+
 @Injectable()
 export class GeneralHelper {
 
   private redisService:RedisService;
-  constructor() {
+  constructor(private readonly mailService: MailService) {
     this.redisService = new RedisService();
   }
 
@@ -16,6 +16,11 @@ export class GeneralHelper {
   // async onModuleInit() {
   //   this.redisService = new RedisService();
   // }
+
+
+  async sendMail(parameters:any): Promise<Boolean>{
+    return this.mailService.sendEmail(parameters);
+  }
 
   static async getUUID(): Promise<string> {
     return await uuidv4();

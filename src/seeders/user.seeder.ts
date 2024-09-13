@@ -2,7 +2,7 @@ import { createConnection, In } from 'typeorm';
 import { Role } from '../modules/roles/entities/role.entity';
 import { User } from '../modules/users/entities/user.entity';
 import { getDBConfig } from '../config/dbConfig';
-import {GeneralHelper} from '../helpers/general.helper.service'
+import {GeneralHelper} from '../global/helper/general.helper.service'
 export async function seed() {
   const connection = await createConnection(getDBConfig());
   const userRepository = connection.getRepository(User);

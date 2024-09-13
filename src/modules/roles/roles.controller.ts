@@ -8,9 +8,9 @@ import { GetDto } from './dto/get.dto';
 import { DeleteDto } from './dto/delete.dto';
 import { Request, Response } from 'express';
 import { Role } from './entities/role.entity';
-import { CustomLoggerService } from '../../logger/logger.service';
+import { CustomLoggerService } from '../../global/logger/logger.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ResponseService } from '../../global/response.service';
+import { ResponseService } from '../../global/response/response.service';
 import { AppPermissionsGuard } from '../auth/permissions.guard';
 import { AppPermissions } from '../auth/permissions.decorator';
 @ApiTags('Roles')

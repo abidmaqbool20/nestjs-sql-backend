@@ -6,7 +6,7 @@ import { RegisterUserDto } from './dto/register.dto';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { ExtractJwt } from 'passport-jwt';
-import { ResponseService } from '../../global/response.service';
+import { ResponseService } from '../../global/response/response.service';
 
 
 @ApiTags('Auth')

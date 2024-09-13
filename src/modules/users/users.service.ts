@@ -3,8 +3,7 @@ import { User } from './entities/user.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { UsersRepository } from './users.repository';
-import { RedisService } from '../../cache/redis.service';
-import { GeneralHelper } from '../../helpers/general.helper.service';
+import { GeneralHelper } from '../../global/helper/general.helper.service';
 @Injectable()
 
 export class UsersService {
@@ -12,9 +11,8 @@ export class UsersService {
   private readonly cacheDuration = 36000; // Cache duration in seconds
 
   constructor(
-    private helper:GeneralHelper,
     private readonly repository: UsersRepository,
-    private readonly redisService: RedisService,
+    private readonly helper: GeneralHelper,
   ) {}
 
   // async onModuleInit() {

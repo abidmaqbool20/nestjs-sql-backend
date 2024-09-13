@@ -1,5 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { CustomLoggerService } from '../logger/logger.service';
+import { CustomLoggerService } from '../global/logger/logger.service';
 import { QueryFailedError } from 'typeorm';
 
 @Catch(HttpException, QueryFailedError)

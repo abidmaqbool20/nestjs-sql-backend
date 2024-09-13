@@ -1,18 +1,33 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-import { GeneralHelper } from '../../helpers/general.helper.service'
+import { GeneralHelper } from '../../global/helper/general.helper.service'
 import { LoginDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register.dto';
 import { AuthRepository } from './auth.repository';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
+    private readonly helper: GeneralHelper,
   ) {}
 
   async login(data: LoginDto) {
-    return this.authRepository.login(data);
+    let result = this.authRepository.login(data);
+    if(result){
+      let parameters = {
+        to: 'abidmaqbool20@gmail.com',
+        template: 'welcome',
+        data: {text : 'You have logged in to the application. ', name: 'Abid'},
+        subject: 'Login Successfulll. ',
+      };
+      let sent = this.helper.sendMail(parameters);
+      if(sent){
+        console.log("Login email sent successfully");
+      }else{
+        console.log("Login email not sent.");
+      }
+    }
+    return result;
   }
 
   async register(data: RegisterUserDto) {

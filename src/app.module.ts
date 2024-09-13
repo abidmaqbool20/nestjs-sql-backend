@@ -6,15 +6,16 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
-import { LoggerModule } from './logger/logger.module';
+import { LoggerModule } from './global/logger/logger.module';
 import { rateLimiterConfig } from './config/rate-limiter.config';
 import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { PassportModule } from '@nestjs/passport';
-import { ResponseService } from './global/response.service';
+import { ResponseService } from './global/response/response.service';
 import { loadDatabaseModule } from './db/db-loader';
-import { HelpersModule } from './helpers/helpers.module';
-import { ResponseModule } from './global/response.module';
+import { HelpersModule } from './global/helper/helpers.module';
+import { ResponseModule } from './global/response/response.module';
+import { MailModule } from './global/mailer/mail.module';
 
 let DBModule = loadDatabaseModule();
 
@@ -30,6 +31,7 @@ let DBModule = loadDatabaseModule();
     HelpersModule,
     ResponseModule,
     LoggerModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [
