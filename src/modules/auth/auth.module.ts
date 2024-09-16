@@ -11,6 +11,7 @@ import { AuthRepository } from './auth.repository';
 import { TokenService } from './token.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),

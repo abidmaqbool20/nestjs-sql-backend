@@ -19,6 +19,13 @@ export class GeneralHelper {
 
 
   async sendMail(parameters:any): Promise<Boolean>{
+    // Dummy data
+    // let parameters = {
+    //     to: 'abidmaqbool20@gmail.com',
+    //     template: 'welcome',
+    //     data: {text : 'You have logged in to the application. ', name: 'Abid'},
+    //     subject: 'Login Successfulll. ',
+    // };
     return this.mailService.sendEmail(parameters);
   }
 

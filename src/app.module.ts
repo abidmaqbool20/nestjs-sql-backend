@@ -16,6 +16,8 @@ import { loadDatabaseModule } from './db/db-loader';
 import { HelpersModule } from './modules/global/helper/helpers.module';
 import { ResponseModule } from './modules/global/response/response.module';
 import { MailModule } from './modules/global/mailer/mail.module';
+import { NotificationsModule } from './modules/global/notifications/notifications.module';
+import { EmailModule } from './modules/global/emails/email.module';
 
 let DBModule = loadDatabaseModule();
 
@@ -32,6 +34,8 @@ let DBModule = loadDatabaseModule();
     ResponseModule,
     LoggerModule,
     MailModule,
+    NotificationsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [
