@@ -2,7 +2,7 @@
 import { Module, Global } from '@nestjs/common';
 import { EmailNotification } from './notification.email';
 import { WebPushNotification } from './notification.web-push';
-import { NotificationType } from './notification-type.enum';
+import { NotificationType } from '../enums/notification-type.enum';
 import { NotificationService } from './notification.service';
 
 @Global()

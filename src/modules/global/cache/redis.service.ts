@@ -7,15 +7,15 @@ config();
 @Injectable()
 export class RedisService {
   private readonly redisClient: Redis;
-
+  public readonly redisConnectionOptions = {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+  }
   constructor() {
-    const redisHost = process.env.REDIS_HOST || 'localhost'; // Default to 'localhost' if not provided
-    const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10); // Convert string to number with default value 6379
+    // const redisHost = process.env.REDIS_HOST || 'localhost'; // Default to 'localhost' if not provided
+    // const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10); // Convert string to number with default value 6379
 
-    this.redisClient = new Redis({
-      host: redisHost,
-      port: redisPort,
-    });
+    this.redisClient = new Redis(this.redisConnectionOptions);
   }
 
   getClient(): Redis {

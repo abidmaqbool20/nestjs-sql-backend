@@ -26,6 +26,7 @@ export class GeneralHelper {
     //     data: {text : 'You have logged in to the application. ', name: 'Abid'},
     //     subject: 'Login Successfulll. ',
     // };
+    // console.log(parameters)
     return this.mailService.sendEmail(parameters);
   }
 

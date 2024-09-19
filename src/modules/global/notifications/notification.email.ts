@@ -3,11 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { Notification } from './notification.interface';
 import { GeneralHelper } from '../helper/general.helper.service';
 
+
 @Injectable()
 export class EmailNotification implements Notification {
+
   constructor(private readonly helper: GeneralHelper) {}
 
   async send(parameters:any): Promise<Boolean>{
-    return this.helper.sendMail(parameters);
+    return await this.helper.sendMail(parameters);
   }
 }

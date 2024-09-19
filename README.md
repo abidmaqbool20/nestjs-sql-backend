@@ -28,6 +28,7 @@
 
 ## You will get
 In this repository you will get:
+
 - JWT Authuntication (passport-jwt)
 - Exception Handeling
 - Logger Implementation
@@ -48,6 +49,10 @@ In this repository you will get:
 - API Reqeust Responses
 - Fastify implementation to handle huge amount of concurent requests
 - Email sending functionality using handelbar template parsing
+- Email and Webpush Notifications
+- Queus - Bull Queue Management
+- Jobs
+- Commands
 
 ## Installation
 
@@ -77,6 +82,12 @@ $ npm run migration:run
 # Seeding database with fake data
 $ npm run seed
 ```
+
+```bash
+# Commands
+$ npm run cli list-commands
+```
+
 ## Stay in touch
 
 - Author - [Abid Maqbool](abidmaqbool20@gmail.com)

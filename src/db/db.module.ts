@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module,Global } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from '../config/typeormconfig';
 import { join } from 'path';
 import { getDBConfig } from '../config/dbConfig';
 const dbConfig = getDBConfig();
+
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
