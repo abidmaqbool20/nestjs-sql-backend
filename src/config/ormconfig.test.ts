@@ -3,7 +3,7 @@ import { join } from 'path';
 import * as dotenv from 'dotenv';
 import { config } from 'dotenv';
 config();
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `.env.test` });
 
 
 

@@ -11,6 +11,7 @@ beforeAll(async () => {
     dataSource = await AppTestDataSource.initialize();
     // await dataSource.runMigrations(); // If needed
     await dataSource.synchronize(true); // Synchronize schema
+    console.log("datasource is configured");
   } catch (error) {
     console.error('Error setting up DataSource:', error);
     throw error;

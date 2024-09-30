@@ -16,7 +16,6 @@ export class JobService {
 
       try {
         const queue = await this.getQueueByName(queueName);
-        await queue.empty();
         await queue.add(queueName, job);
       } catch (error) {
         console.error(`Error in dispatching job to queue "${queueName}": ${error.message}`);

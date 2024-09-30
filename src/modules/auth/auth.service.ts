@@ -37,7 +37,6 @@ export class AuthService {
       notificationJob.data = notificationData;
       await this.jobService.dispatch(notificationJob);
 
-
       // this.emailService.sendMail(EmailTypes.WelcomeEmail,emailData);
       // this.notification.sendNotification(NotificationType.WebPush,result);
       // this.notification.sendNotification(NotificationType.Email,notificationData);

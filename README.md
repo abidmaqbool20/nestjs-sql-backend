@@ -53,6 +53,7 @@ In this repository you will get:
 - Queus - Bull Queue Management
 - Jobs
 - Commands
+- POSTMAN API Collection File
 
 ## Installation
 
@@ -82,6 +83,8 @@ $ npm run migration:run
 # Seeding database with fake data
 $ npm run seed
 ```
+
+## Checking with commands
 
 ```bash
 # Commands
