@@ -3,6 +3,7 @@ import { GeneralHelper } from '../global/helper/general.helper.service'
 import { LoginDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register.dto';
 import { AuthRepository } from './auth.repository';
+import { UsersService } from '../users/users.service';
 import { NotificationService } from '../global/notifications/notification.service';
 import { EmailService } from '../global/emails/email.service';
 import { EmailTypes } from '../global/emails/email-types.enum';
@@ -15,6 +16,8 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly helper: GeneralHelper,
+    private readonly userService: UsersService,
+
     // private readonly notification: NotificationService,
     // private readonly emailService: EmailService,
     private readonly jobService: JobService,
@@ -23,12 +26,12 @@ export class AuthService {
   async login(data: LoginDto) {
     let result = this.authRepository.login(data);
     if(result){
-
+      let authUser = await this.userService.findByUsername(data.username);
       let notificationData = {
           notifications : ['email'],
-          to: 'abidmaqbool20@gmail.com',
+          to: authUser.email ?? 'abidmaqbool20@gmail.com',
           template: 'welcome',
-          data: {text : 'You have logged in to the application. ', name: 'Abid'},
+          data: {text : 'You have logged in to the application. ', name: authUser.name ?? 'Abid'},
           subject: 'Login Successfulll. ',
       };
 

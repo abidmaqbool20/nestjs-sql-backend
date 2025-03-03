@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsEmail, IsDate } from 'class-validator';
+import { IsOptional, IsString, IsEmail, IsDate, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import {Role} from '../../roles/entities/role.entity'
 export class CreateDto {
@@ -25,6 +25,6 @@ export class CreateDto {
   updated_at: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsArray()
   roles: Role[];
 }
