@@ -1,6 +1,7 @@
-import { IsOptional, IsString, IsEmail, IsDate, IsArray } from 'class-validator';
+import { IsOptional, IsString, IsEmail, IsDate, IsArray, IsInt} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import {Role} from '../../roles/entities/role.entity'
+import { Type } from 'class-transformer';
 export class CreateDto {
 
   @ApiProperty({ description: 'The name of the user' })
@@ -26,5 +27,7 @@ export class CreateDto {
 
   @IsOptional()
   @IsArray()
-  roles: Role[];
+  @IsInt({ each: true })
+  @Type(() => Number)
+  roleIds?: number[];
 }

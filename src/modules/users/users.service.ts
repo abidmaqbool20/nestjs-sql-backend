@@ -4,6 +4,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { UsersRepository } from './users.repository';
 import { GeneralHelper } from '../global/helper/general.helper.service';
+import { Role } from '../roles/entities/role.entity';
 @Injectable()
 
 export class UsersService {
@@ -21,6 +22,7 @@ export class UsersService {
 
   // Create a record
   async create(data: CreateDto): Promise<User> {
+    data.password = await GeneralHelper.encrypt(data.password);
     let created = await this.repository.create(data);
     if (created) {
       await this.helper.delCache([`${this.module}-findAll`]);
@@ -67,8 +69,23 @@ export class UsersService {
     return result;
   }
 
+
+  // Find by ids
+  async findByIds(ids: string[]): Promise<User[]> {
+    const cacheKey = `${this.module}-findByIds`;
+    let result = await this.helper.getCache<User[]>(cacheKey);
+    if (!result) {
+      result = await this.repository.findByIds(ids);
+      await this.helper.doCache(cacheKey, result, this.cacheDuration);
+    }
+    return result;
+  }
+
   // Update record
   async update(id: bigint, userData: UpdateDto): Promise<User> {
+    if(userData.password && userData.password.length){
+      userData.password = await GeneralHelper.encrypt(userData.password);
+    }
     let result = await this.repository.update(id, userData);
     await this.helper.delCache([`${this.module}-findAll`, `${this.module}-findOne-${id}`]);
     return result;

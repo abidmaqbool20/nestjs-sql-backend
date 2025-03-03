@@ -7,14 +7,18 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
 import { UsersRepository } from '../users/users.repository';
+import { RolesRepository } from '../roles/roles.repository';
 import { AuthRepository } from './auth.repository';
 import { TokenService } from './token.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
-
+import { Role } from '../roles/entities/role.entity';
+import { PermissionsService } from '../permissions/permissions.service';
+import { Permission } from '../permissions/entities/permission.entity';
+import { PermissionsRepository } from '../permissions/permissions.repository';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User,Role,Permission]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'aY1le56893WRjtAQyzMemUUq3RfreGYJY1iL',
@@ -27,6 +31,9 @@ import { User } from '../users/entities/user.entity';
     JwtStrategy,
     UsersService,
     UsersRepository,
+    PermissionsRepository,
+    PermissionsService,
+    RolesRepository,
     AuthRepository,
     TokenService,
   ],

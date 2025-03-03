@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn , ManyToMany, JoinTable} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn , ManyToMany, JoinTable, Repository} from 'typeorm';
 import { CreateDto } from '../dto/create.dto';
 import { Role } from '../../roles/entities/role.entity';
 
@@ -31,14 +31,25 @@ export class User {
   })
   roles: Role[];
 
-  static async newInstanceFromDTO(data: CreateDto): Promise<User> {
+  static async newInstanceFromDTO(
+    data: CreateDto,
+    roleRepository: Repository<Role>
+  ): Promise<User> {
     const result = new User();
     result.name = data.name;
     result.email = data.email;
     result.password = data.password;
     result.created_at = data.created_at || new Date();
     result.updated_at = new Date();
+
+    if (data.roleIds && data.roleIds.length > 0) {
+      result.roles = await roleRepository.findByIds(data.roleIds);
+    } else {
+      result.roles = [];
+    }
+
     return result;
   }
+
 
 }

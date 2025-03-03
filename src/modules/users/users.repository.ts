@@ -1,20 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './entities/user.entity';
+import { Role } from '../roles/entities/role.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersRepository {
   constructor(
       @InjectRepository(User)
-      private readonly UserModel: Repository<User>
+      private readonly UserModel: Repository<User>,
+      @InjectRepository(Role)
+      private readonly RoleModel: Repository<Role>
   ) {}
 
-  // Create a record
   async create(data: CreateDto): Promise<User> {
-    const user = await User.newInstanceFromDTO(data);
+    const user = await User.newInstanceFromDTO(data, this.RoleModel);
+
+    // Fetch roles if role IDs exist
+    if (data.roleIds && data.roleIds.length > 0) {
+      user.roles = await this.RoleModel.findByIds(data.roleIds);
+    }
+
     return this.UserModel.save(user);
   }
 
@@ -39,6 +47,17 @@ export class UsersRepository {
       throw new NotFoundException('Record not found');
     }
     return user;
+  }
+
+  // Find by Username
+  async findByIds(ids: String[]): Promise<User[]> {
+    const record = await this.UserModel.find({
+      where: { id: In(ids) },
+    });
+    if (!record) {
+      throw new NotFoundException('Records not found');
+    }
+    return record;
   }
 
   // Update record

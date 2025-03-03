@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { Role } from './entities/role.entity';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PermissionsService } from '../permissions/permissions.service';
 @Injectable()
@@ -54,6 +54,17 @@ export class RolesRepository {
     const record = await this.RoleModel.findOne({  where: { name : name }, relations: [ 'permissions']});
     if (!record) {
       throw new NotFoundException('Record not found');
+    }
+    return record;
+  }
+
+  // Find by Username
+  async findByIds(ids: String[]): Promise<Role[]> {
+    const record = await this.RoleModel.find({
+      where: { id: In(ids) },
+    });
+    if (!record) {
+      throw new NotFoundException('Records not found');
     }
     return record;
   }

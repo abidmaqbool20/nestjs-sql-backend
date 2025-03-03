@@ -64,6 +64,17 @@ export class RolesService implements OnModuleInit {
     return result;
   }
 
+  // Find by ids
+  async findByIds(ids: string[]): Promise<Role[]> {
+    const cacheKey = `${this.module}-findByIds`;
+    let result = await this.helper.getCache<Role[]>(cacheKey);
+    if (!result) {
+      result = await this.repository.findByIds(ids);
+      await this.helper.doCache(cacheKey, result, this.cacheDuration);
+    }
+    return result;
+  }
+
   // Update record
   async update(id: bigint, userData: UpdateDto): Promise<Role> {
     const result = await this.repository.update(id, userData);
