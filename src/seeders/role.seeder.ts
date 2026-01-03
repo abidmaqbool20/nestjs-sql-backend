@@ -1,14 +1,19 @@
-import { createConnection, In } from 'typeorm';
+import * as dotenv from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { In } from 'typeorm';
 import { Role } from '../modules/roles/entities/role.entity';
 import { Permission } from '../modules/permissions/entities/permission.entity';
-import { getDBConfig } from '../config/dbConfig';
+import { buildDbConfig } from '../config/db.config';
+
+dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+const dataSource = new DataSource(buildDbConfig(process.env) as DataSourceOptions);
 
 export async function seed() {
-  const connection = await createConnection(getDBConfig());
-  const roleRepository = connection.getRepository(Role);
-  const permissionRepository = connection.getRepository(Permission);
+  await dataSource.initialize();
 
-  // List of roles and their associated permissions
+  const roleRepository = dataSource.getRepository(Role);
+  const permissionRepository = dataSource.getRepository(Permission);
+
   const rolesWithPermissions = [
     {
       name: 'Admin',
@@ -40,30 +45,31 @@ export async function seed() {
     },
     {
       name: 'Member',
-      permissions: ['view-subscription','update-subscription'],
+      permissions: [
+        'view-subscription',
+        'update-subscription',
+      ],
     },
   ];
 
   for (const roleData of rolesWithPermissions) {
-    let role = await roleRepository.findOne({ where: { name: roleData.name } });
+    let role = await roleRepository.findOne({
+      where: { name: roleData.name },
+    });
 
     if (!role) {
-      // Create a new role if it doesn't exist
-      role = new Role();
-      role.name = roleData.name;
+      role = roleRepository.create({ name: roleData.name });
     }
 
-    // Find permissions by name using the In operator
     const permissions = await permissionRepository.find({
       where: { name: In(roleData.permissions) },
     });
 
     role.permissions = permissions;
-
-    // Save the role with its associated permissions
     await roleRepository.save(role);
   }
 
-  console.log('Roles and permissions have been successfully saved!');
-  await connection.close();
+  console.log('✅ Roles and permissions seeded successfully');
+
+  await dataSource.destroy();
 }

@@ -1,12 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, ValidationPipe, Res, HttpStatus, UsePipes, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Inject,
+  ValidationPipe,
+  Res,
+  HttpStatus,
+  UsePipes,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 
 import { PermissionsService } from './permissions.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { DeleteDto } from './dto/delete.dto';
 import { Permission } from './entities/permission.entity';
-import { FastifyReply } from 'fastify';  // Import Fastify types
 import { CustomLoggerService } from '../global/logger/logger.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ResponseService } from '../global/response/response.service';
@@ -20,27 +39,38 @@ export class PermissionsController {
   constructor(
     private readonly moduleService: PermissionsService,
     private readonly responseService: ResponseService,
-    @Inject(CustomLoggerService) private readonly logger: CustomLoggerService,
-  ) {}
+    @Inject(CustomLoggerService)
+    private readonly logger: CustomLoggerService,
+  ) { }
 
   // Create API
   @Post()
   @AppPermissions('create-permission')
   @ApiOperation({ summary: 'Create a new permission' })
-  @ApiResponse({ status: 201, description: 'Permission has been successfully created.', type: Permission })
+  @ApiResponse({
+    status: 201,
+    description: 'Permission has been successfully created.',
+    type: Permission,
+  })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: CreateDto })
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-  async create(@Body(new ValidationPipe({ transform: true, whitelist: true })) data: CreateDto, @Res() res: FastifyReply) {
+  async create(
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    data: CreateDto,
+    @Res() res: any,
+  ) {
     try {
-      let result = await this.moduleService.create(data);
+      const result = await this.moduleService.create(data);
 
       let message = 'Unsuccessful. Error occurred!';
       res.status(HttpStatus.BAD_REQUEST);
+
       if (result) {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
+
       return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, 'An error occurred while creating permission');
@@ -52,18 +82,24 @@ export class PermissionsController {
   @Get()
   @AppPermissions('view-permission')
   @ApiOperation({ summary: 'Get all permissions' })
-  @ApiResponse({ status: 200, description: 'List of permissions', type: [Permission] })
+  @ApiResponse({
+    status: 200,
+    description: 'List of permissions',
+    type: [Permission],
+  })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  async findAll(@Res() res: FastifyReply) {
+  async findAll(@Res() res: any) {
     try {
-      let result = await this.moduleService.findAll();
+      const result = await this.moduleService.findAll();
 
       let message = 'Unsuccessful. Error occurred!';
       res.status(HttpStatus.BAD_REQUEST);
+
       if (result) {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
+
       return this.responseService.sendResponse(res, message, result);
     } catch (error) {
       this.logger.error(error, 'An error occurred while fetching all permissions');
@@ -76,22 +112,31 @@ export class PermissionsController {
   @AppPermissions('view-permission')
   @ApiOperation({ summary: 'Get a permission by ID' })
   @ApiParam({ name: 'id', description: 'Permission ID', type: 'number' })
-  @ApiResponse({ status: 200, description: 'Permission found', type: Permission })
+  @ApiResponse({
+    status: 200,
+    description: 'Permission found',
+    type: Permission,
+  })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async findOne(@Param('id') id: bigint, @Res() res: FastifyReply) {
+  async findOne(@Param('id') id: bigint, @Res() res: any) {
     try {
-      let result = await this.moduleService.findOne(id);
+      const result = await this.moduleService.findOne(id);
 
       let message = 'Unsuccessful. Error occurred!';
       res.status(HttpStatus.BAD_REQUEST);
+
       if (result) {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
+
       return this.responseService.sendResponse(res, message, result);
     } catch (error) {
-      this.logger.error(error, `An error occurred while fetching permission with id ${id}`);
+      this.logger.error(
+        error,
+        `An error occurred while fetching permission with id ${id}`,
+      );
       throw error;
     }
   }
@@ -102,22 +147,35 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Update a permission by ID' })
   @ApiParam({ name: 'id', description: 'Permission ID', type: 'number' })
   @ApiBody({ type: UpdateDto })
-  @ApiResponse({ status: 200, description: 'Permission updated', type: Permission })
+  @ApiResponse({
+    status: 200,
+    description: 'Permission updated',
+    type: Permission,
+  })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async update(@Param('id') id: bigint, @Body() data: UpdateDto, @Res() res: FastifyReply) {
+  async update(
+    @Param('id') id: bigint,
+    @Body() data: UpdateDto,
+    @Res() res: any,
+  ) {
     try {
-      let result = await this.moduleService.update(id, data);
+      const result = await this.moduleService.update(id, data);
 
       let message = 'Unsuccessful. Error occurred!';
       res.status(HttpStatus.BAD_REQUEST);
+
       if (result) {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
+
       return this.responseService.sendResponse(res, message, result);
     } catch (error) {
-      this.logger.error(error, `An error occurred while updating permission with id ${id}`);
+      this.logger.error(
+        error,
+        `An error occurred while updating permission with id ${id}`,
+      );
       throw error;
     }
   }
@@ -130,20 +188,26 @@ export class PermissionsController {
   @ApiResponse({ status: 204, description: 'Permission deleted' })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  async remove(@Param() params: DeleteDto, @Res() res: FastifyReply) {
+  async remove(@Param() params: DeleteDto, @Res() res: any) {
     const { id } = params;
+
     try {
-      let result = await this.moduleService.remove(id);
+      const result = await this.moduleService.remove(id);
 
       let message = 'Unsuccessful. Error occurred!';
       res.status(HttpStatus.BAD_REQUEST);
+
       if (result) {
         res.status(HttpStatus.OK);
         message = 'successful';
       }
+
       return this.responseService.sendResponse(res, message, result);
     } catch (error) {
-      this.logger.error(error, `An error occurred while deleting permission with id ${id}`);
+      this.logger.error(
+        error,
+        `An error occurred while deleting permission with id ${id}`,
+      );
       throw error;
     }
   }

@@ -1,12 +1,20 @@
-import { createConnection, In } from 'typeorm';
+import * as dotenv from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { In } from 'typeorm';
 import { Role } from '../modules/roles/entities/role.entity';
 import { User } from '../modules/users/entities/user.entity';
-import { getDBConfig } from '../config/dbConfig';
-import {GeneralHelper} from '../modules/global/helper/general.helper.service'
+import { buildDbConfig } from '../config/db.config';
+import { GeneralHelper } from '../modules/global/helper/general.helper.service'
+
+
+dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+const dataSource = new DataSource(buildDbConfig(process.env) as DataSourceOptions);
+
 export async function seed() {
-  const connection = await createConnection(getDBConfig());
-  const userRepository = connection.getRepository(User);
-  const roleRepository = connection.getRepository(Role);
+  await dataSource.initialize();
+
+  const userRepository = dataSource.getRepository(User);
+  const roleRepository = dataSource.getRepository(Role);
 
   // List of roles and their associated permissions
   const usersWithRoles = [
@@ -46,7 +54,7 @@ export async function seed() {
       user.name = userData.name;
       user.email = userData.email;
       user.password = await GeneralHelper.encrypt(userData.password);
-    }else{
+    } else {
       user.name = userData.name;
       user.password = await GeneralHelper.encrypt(userData.password);
     }
@@ -62,5 +70,5 @@ export async function seed() {
   }
 
   console.log('User and roles have been successfully saved!');
-  await connection.close();
+  await dataSource.destroy();
 }

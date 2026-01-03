@@ -1,30 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../modules/global/cache/redis.service';
-import Redis from 'ioredis';
 import { ModuleRef } from '@nestjs/core';
+import Redis from 'ioredis';
 import { Command } from '../command.interface';
+import { RedisService } from '../../modules/global/cache/redis.service';
 
 @Injectable()
-export class ListQueueCommand implements Command{
+export class ListQueueCommand implements Command {
   private redisClient: Redis;
-  private redisService = new RedisService();
 
   constructor(private readonly moduleRef: ModuleRef) {
-    this.redisClient = this.redisService.getClient();
+    const redisService = this.moduleRef.get(RedisService, { strict: false });
+    this.redisClient = redisService.getClient();
   }
 
-
-  async execute(): Promise<any>{
+  async execute(): Promise<void> {
     try {
       const keys = await this.redisClient.keys('bull:*:id');
-      let queueNames = keys.map(key => key.split(':')[1]);
-      queueNames = [...new Set(queueNames)]; // Return unique queue names
-      console.log(queueNames);
 
-    } catch (error) {
-      console.error(`Failed to empty queue "${name}": ${error.message}`);
+      const queueNames = [
+        ...new Set(keys.map(key => key.split(':')[1])),
+      ];
+
+      console.log(queueNames.length ? queueNames : 'No queues found');
+    } catch (error: any) {
+      console.error(`Failed to list queues: ${error.message}`);
     }
   }
-
-
 }
+
+/**
+ * 👇 Commander auto-discovery metadata
+ */
+export default {
+  name: 'list-queues',
+  description: 'List all Bull queues',
+  handler: ListQueueCommand,
+};

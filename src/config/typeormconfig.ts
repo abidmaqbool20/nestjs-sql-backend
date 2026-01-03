@@ -1,10 +1,13 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { registerAs } from '@nestjs/config';
-import { config } from 'dotenv';
-import { getDBConfig } from './dbConfig';
+import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
-config();
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-let dbConfig = getDBConfig();
-export default registerAs('typeormconfig', () => dbConfig);
-export const connectionSource = new DataSource( dbConfig as DataSourceOptions );
+import { buildDbConfig } from './db.config';
+
+dotenv.config({
+    path: `.env.${process.env.NODE_ENV || 'development'}`,
+});
+
+import { DataSourceOptions } from 'typeorm';
+
+export default new DataSource(
+    buildDbConfig(process.env) as DataSourceOptions,
+);

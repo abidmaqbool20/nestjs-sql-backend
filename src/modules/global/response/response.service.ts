@@ -1,12 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
-import { HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class ResponseService {
 
-  sendResponse(res: FastifyReply, message: string, data?: any) {
-    const status = res.statusCode; // Fastify does not have `res.statusCode`, so you may need to pass status explicitly
+  sendResponse(res: any, message: string, data?: any) {
+    const status = res.statusCode;
 
     switch (status) {
       case HttpStatus.OK:
@@ -28,31 +26,31 @@ export class ResponseService {
     }
   }
 
-  sendSuccess(res: FastifyReply, message: string, data?: any) {
+  sendSuccess(res: any, message: string, data?: any) {
     return res.status(HttpStatus.OK).send({ message, data });
   }
 
-  sendCreated(res: FastifyReply, message: string, data?: any) {
+  sendCreated(res: any, message: string, data?: any) {
     return res.status(HttpStatus.CREATED).send({ message, data });
   }
 
-  sendBadRequest(res: FastifyReply, message: string, errors?: any) {
+  sendBadRequest(res: any, message: string, errors?: any) {
     return res.status(HttpStatus.BAD_REQUEST).send({ message, errors });
   }
 
-  sendUnauthorized(res: FastifyReply, message: string) {
+  sendUnauthorized(res: any, message: string) {
     return res.status(HttpStatus.UNAUTHORIZED).send({ message });
   }
 
-  sendForbidden(res: FastifyReply, message: string) {
+  sendForbidden(res: any, message: string) {
     return res.status(HttpStatus.FORBIDDEN).send({ message });
   }
 
-  sendNotFound(res: FastifyReply, message: string) {
+  sendNotFound(res: any, message: string) {
     return res.status(HttpStatus.NOT_FOUND).send({ message });
   }
 
-  sendInternalError(res: FastifyReply, message: string, error?: any) {
+  sendInternalError(res: any, message: string, error?: any) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message, error });
   }
 }
